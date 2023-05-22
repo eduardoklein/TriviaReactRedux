@@ -4,6 +4,7 @@ import './App.css';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom/cjs/react-router-dom';
 import Login from './pages/Login';
+import Game from './pages/Game';
 
 class App extends React.Component {
   render() {
@@ -15,6 +16,7 @@ class App extends React.Component {
           path="/"
           component={ Login }
         />
+        <Route path="/game" component={ Game } />
       </Switch>
     );
   }
