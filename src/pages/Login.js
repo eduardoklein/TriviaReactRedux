@@ -34,12 +34,20 @@ class Login extends React.Component {
     }, this.validationUserAndEmail);
   };
 
-  // onLoginButtonClick = () => {
-  //   const { history, dispatch } = this.props;
-  //   const { email } = this.state;
-  //   dispatch(saveLogin(email));
-  //   history.push('/');
-  // };
+  fetchTrivaToken = async () => {
+    const API_URL = 'https://opentdb.com/api_token.php?command=request';
+    const request = await fetch(API_URL);
+    const data = await request.json();
+    const { token } = data;
+
+    localStorage.setItem('token', token);
+  };
+
+  onLoginButtonClick = async () => {
+    const { history } = this.props;
+    await this.fetchTrivaToken();
+    history.push('/game');
+  };
 
   render() {
     const {
@@ -75,10 +83,7 @@ class Login extends React.Component {
           <button
             type="button"
             data-testid="btn-play"
-            // onClick={ (event) => {
-            //   this.onLoginButtonClick();
-            //   event.preventDefault();
-            // } }
+            onClick={ this.onLoginButtonClick }
             disabled={ isButtonDisabled }
           >
             Play
