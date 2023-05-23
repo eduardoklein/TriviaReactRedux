@@ -3,6 +3,7 @@ import {
   FAILED_REQUEST,
   SAVE_TRIVIA_QUESTIONS,
   GET_PLAYER_SCORE,
+  UPDATE_SCORE,
 } from './actionTypes';
 
 export const newRequest = () => ({ type: NEW_REQUEST });
@@ -18,6 +19,11 @@ export const saveTriviaQuestions = (questions) => ({
 export const getPlayerScore = (difficulty) => ({
   type: GET_PLAYER_SCORE,
   difficulty,
+});
+
+export const updateScore = (score) => ({
+  type: UPDATE_SCORE,
+  score,
 });
 
 export const thunkTriviaQuestions = () => async (dispatch) => {

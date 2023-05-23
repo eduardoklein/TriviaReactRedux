@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getPlayerScore } from '../redux/actions';
+import { getPlayerScore, updateScore } from '../redux/actions';
 import './QuestionCard.css';
 
 const interval = 1000;
-
 class QuestionCard extends Component {
   state = {
     answers: [],
@@ -48,9 +47,12 @@ class QuestionCard extends Component {
         .map((answer) => ({ answer, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ answer }) => answer);
-
       this.setState({ answers: shuffledAnswers });
     }
+  };
+
+  handleCorrectAnswer = () => {
+
   };
 
   render() {
@@ -90,7 +92,7 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
-                  onClick={ () => getPlayerScoreDispatched(difficulty) }
+                  onClick={ this.handleCorrectAnswer }
                 >
                   {answer}
                 </button>
@@ -103,7 +105,6 @@ class QuestionCard extends Component {
     }
   }
 }
-
 QuestionCard.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.shape({
     difficulty: PropTypes.number,
@@ -114,14 +115,12 @@ QuestionCard.propTypes = {
   })).isRequired,
   getPlayerScoreDispatched: PropTypes.func.isRequired,
 };
-
 const mapStateToProps = ({ trivia }) => ({
   questions: trivia.questions,
   isLoading: trivia.isFetching,
 });
-
 const mapDispatchToProps = (dispatch) => ({
   getPlayerScoreDispatched: (difficulty) => dispatch(getPlayerScore(difficulty)),
+  updateScoreDispatched: (score) => dispatch(updateScore(score)),
 });
-
 export default connect(mapStateToProps, mapDispatchToProps)(QuestionCard);
