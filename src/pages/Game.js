@@ -17,13 +17,13 @@ class Game extends Component {
   }
 
   render() {
-    const { isLoading, error } = this.props;
+    const { isLoading, error, history } = this.props;
     if (error) return (<h1>{`Error: ${error}`}</h1>);
     if (isLoading) return <h1>Loading...</h1>;
     return (
       <div>
         <Header />
-        <QuestionCard />
+        <QuestionCard history={ history } />
       </div>
     );
   }

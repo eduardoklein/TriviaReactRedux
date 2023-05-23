@@ -12,8 +12,8 @@ class QuestionCard extends Component {
   };
 
   componentDidMount() {
-    this.shuffleAnswers();
     this.timerInterval();
+    this.shuffleAnswers();
   }
 
   componentWillUnmount() {
@@ -33,16 +33,18 @@ class QuestionCard extends Component {
 
   shuffleAnswers = () => {
     const { questions } = this.props;
-    const answers = [
-      questions[0].correct_answer,
-      ...questions[0].incorrect_answers,
-    ];
-    const shuffledAnswers = answers
-      .map((answer) => ({ answer, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ answer }) => answer);
+    if (questions.length) {
+      const answers = [
+        questions[0].correct_answer,
+        ...questions[0].incorrect_answers,
+      ];
+      const shuffledAnswers = answers
+        .map((answer) => ({ answer, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ answer }) => answer);
 
-    this.setState({ answers: shuffledAnswers });
+      this.setState({ answers: shuffledAnswers });
+    }
   };
 
   render() {
@@ -103,6 +105,7 @@ QuestionCard.propTypes = {
 
 const mapStateToProps = ({ trivia }) => ({
   questions: trivia.questions,
+  isLoading: trivia.isFetching,
 });
 
 export default connect(mapStateToProps)(QuestionCard);
