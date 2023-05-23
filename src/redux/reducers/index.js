@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import reducerTest from './reducerTest';
+import trivia from './trivia';
 
-const rootReducer = combineReducers({ reducerTest });
+const rootReducer = combineReducers({ trivia });
 
 export default rootReducer;

@@ -34,11 +34,10 @@ class Login extends React.Component {
     }, this.validationUserAndEmail);
   };
 
-  fetchTrivaToken = async () => {
+  fetchTriviaToken = async () => {
     const API_URL = 'https://opentdb.com/api_token.php?command=request';
     const request = await fetch(API_URL);
     const data = await request.json();
-    console.log(data);
     const { token } = data;
 
     localStorage.setItem('token', token);
@@ -46,7 +45,7 @@ class Login extends React.Component {
 
   onLoginButtonClick = async () => {
     const { history } = this.props;
-    await this.fetchTrivaToken();
+    await this.fetchTriviaToken();
     history.push('/game');
   };
 
