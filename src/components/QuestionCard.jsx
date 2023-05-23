@@ -12,7 +12,17 @@ class QuestionCard extends Component {
   };
 
   componentDidMount() {
-    this.timerInterval();
+    this.timerInterval = setInterval(() => {
+      this.setState((prevState) => {
+        if (prevState.timer === 0) {
+          clearInterval(this.timerInterval);
+          return prevState;
+        }
+        return {
+          timer: prevState.timer - 1,
+        };
+      });
+    }, interval);
     this.shuffleAnswers();
   }
 
@@ -20,16 +30,11 @@ class QuestionCard extends Component {
     clearInterval(this.timerInterval);
   }
 
-  timerInterval = () => {
-    const { timer } = this.state;
-    if (timer > 0) {
-      setInterval(() => {
-        this.setState((prevState) => ({
-          timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
-        }));
-      }, interval);
-    }
-  };
+  timerInterval = () => setInterval(() => {
+    this.setState((prevState) => ({
+      timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
+    }));
+  }, interval);
 
   shuffleAnswers = () => {
     const { questions } = this.props;
