@@ -20,11 +20,16 @@ class QuestionCard extends Component {
     clearInterval(this.timerInterval);
   }
 
-  timerInterval = () => setInterval(() => {
-    this.setState((prevState) => ({
-      timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
-    }));
-  }, interval);
+  timerInterval = () => {
+    const { timer } = this.state;
+    if (timer > 0) {
+      setInterval(() => {
+        this.setState((prevState) => ({
+          timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
+        }));
+      }, interval);
+    }
+  };
 
   shuffleAnswers = () => {
     const { questions } = this.props;
@@ -45,6 +50,7 @@ class QuestionCard extends Component {
     if (questions.length) {
       const { timer, answers } = this.state;
       const index = 0;
+      console.log(questions[0]);
       const { category, question, correct_answer: correct } = questions[index];
       let indexCounter = 0;
       return (
@@ -59,6 +65,7 @@ class QuestionCard extends Component {
                     key={ Math.random() }
                     data-testid={ `wrong-answer-${indexCounter}` }
                     className="wrong-answer"
+                    disabled={ timer === 0 }
                   >
                     {answer}
                   </button>
@@ -71,6 +78,7 @@ class QuestionCard extends Component {
                   key={ Math.random() }
                   data-testid="correct-answer"
                   className="correct-answer"
+                  disabled={ timer === 0 }
                 >
                   {answer}
                 </button>
