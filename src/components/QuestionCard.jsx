@@ -3,28 +3,49 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './QuestionCard.css';
 
+const interval = 1000;
+
 class QuestionCard extends Component {
-  shuffleAnswers = (questions, index) => {
+  state = {
+    answers: [],
+    timer: 30,
+  };
+
+  componentDidMount() {
+    this.shuffleAnswers();
+    this.timerInterval();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerInterval);
+  }
+
+  timerInterval = () => setInterval(() => {
+    this.setState((prevState) => ({
+      timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
+    }));
+  }, interval);
+
+  shuffleAnswers = () => {
+    const { questions } = this.props;
     const answers = [
-      questions[index].correct_answer,
-      ...questions[index].incorrect_answers,
+      questions[0].correct_answer,
+      ...questions[0].incorrect_answers,
     ];
-    return answers
+    const shuffledAnswers = answers
       .map((answer) => ({ answer, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ answer }) => answer);
+
+    this.setState({ answers: shuffledAnswers });
   };
 
   render() {
     const { questions } = this.props;
     if (questions.length) {
+      const { timer, answers } = this.state;
       const index = 0;
       const { category, question, correct_answer: correct } = questions[index];
-      const answers = this.shuffleAnswers(questions, index);
-      let timer = 30;
-      setInterval(() => {
-        timer -= 1;
-      }, 1000);
       let indexCounter = 0;
       return (
         <main>
