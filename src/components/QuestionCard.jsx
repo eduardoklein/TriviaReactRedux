@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { getPlayerScore } from '../redux/actions';
 import './QuestionCard.css';
 
 const interval = 1000;
@@ -53,12 +54,15 @@ class QuestionCard extends Component {
   };
 
   render() {
-    const { questions } = this.props;
+    const { questions, getPlayerScoreDispatched } = this.props;
     if (questions.length) {
       const { timer, answers } = this.state;
       const index = 0;
       console.log(questions[0]);
-      const { category, question, correct_answer: correct } = questions[index];
+      const { category,
+        question,
+        correct_answer: correct,
+        difficulty } = questions[index];
       let indexCounter = 0;
       return (
         <main>
@@ -86,6 +90,7 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
+                  onClick={ () => getPlayerScoreDispatched(difficulty) }
                 >
                   {answer}
                 </button>
@@ -101,11 +106,13 @@ class QuestionCard extends Component {
 
 QuestionCard.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.shape({
+    difficulty: PropTypes.number,
     category: PropTypes.string,
     question: PropTypes.string,
     correct_answer: PropTypes.string,
     incorrect_answers: PropTypes.arrayOf(PropTypes.string),
   })).isRequired,
+  getPlayerScoreDispatched: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ trivia }) => ({
@@ -113,4 +120,8 @@ const mapStateToProps = ({ trivia }) => ({
   isLoading: trivia.isFetching,
 });
 
-export default connect(mapStateToProps)(QuestionCard);
+const mapDispatchToProps = (dispatch) => ({
+  getPlayerScoreDispatched: (difficulty) => dispatch(getPlayerScore(difficulty)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionCard);
