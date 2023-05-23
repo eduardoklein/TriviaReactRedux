@@ -21,25 +21,28 @@ class QuestionCard extends Component {
       const index = 0;
       const { category, question, correct_answer: correct } = questions[index];
       const answers = this.shuffleAnswers(questions, index);
-      let counter = 0;
+      let timer = 30;
+      setInterval(() => {
+        timer -= 1;
+      }, 1000);
+      let indexCounter = 0;
       return (
         <main>
           <p data-testid="question-category">{category}</p>
           <p data-testid="question-text">{question}</p>
           <div data-testid="answer-options">
             {answers.map((answer) => {
-              console.log(correct, answer);
               if (answer !== correct) {
                 const incorrectAnswer = (
                   <button
                     key={ Math.random() }
-                    data-testid={ `wrong-answer-${counter}` }
+                    data-testid={ `wrong-answer-${indexCounter}` }
                     className="wrong-answer"
                   >
                     {answer}
                   </button>
                 );
-                counter += 1;
+                indexCounter += 1;
                 return incorrectAnswer;
               }
               return (
@@ -52,6 +55,7 @@ class QuestionCard extends Component {
                 </button>
               );
             })}
+            {timer}
           </div>
         </main>
       );
