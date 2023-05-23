@@ -9,11 +9,14 @@ class QuestionCard extends Component {
   state = {
     answers: [],
     timer: 30,
+    index: 0,
+    isNextQuestion: false,
   };
 
   componentDidMount() {
+    const { index } = this.state;
     this.timerInterval();
-    this.shuffleAnswers();
+    this.shuffleAnswers(index);
   }
 
   componentWillUnmount() {
@@ -31,12 +34,12 @@ class QuestionCard extends Component {
     }
   };
 
-  shuffleAnswers = () => {
+  shuffleAnswers = (index) => {
     const { questions } = this.props;
     if (questions.length) {
       const answers = [
-        questions[0].correct_answer,
-        ...questions[0].incorrect_answers,
+        questions[index].correct_answer,
+        ...questions[index].incorrect_answers,
       ];
       const shuffledAnswers = answers
         .map((answer) => ({ answer, sort: Math.random() }))
@@ -47,12 +50,22 @@ class QuestionCard extends Component {
     }
   };
 
+  handleClickOnAnswer = () => {
+    this.setState({ isNextQuestion: true });
+  };
+
+  handleNextQuestion = () => {
+    const { index } = this.state;
+    this.setState((prev) => ({
+      index: prev.index + 1,
+      isNextQuestion: false,
+    }), this.shuffleAnswers(index + 1));
+  };
+
   render() {
     const { questions } = this.props;
     if (questions.length) {
-      const { timer, answers } = this.state;
-      const index = 0;
-      console.log(questions[0]);
+      const { timer, answers, index, isNextQuestion } = this.state;
       const { category, question, correct_answer: correct } = questions[index];
       let indexCounter = 0;
       return (
@@ -68,6 +81,7 @@ class QuestionCard extends Component {
                     data-testid={ `wrong-answer-${indexCounter}` }
                     className="wrong-answer"
                     disabled={ timer === 0 }
+                    onClick={ this.handleClickOnAnswer }
                   >
                     {answer}
                   </button>
@@ -81,12 +95,21 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
+                  onClick={ this.handleClickOnAnswer }
                 >
                   {answer}
                 </button>
               );
             })}
             {timer}
+            {isNextQuestion && (
+              <button
+                data-testid="btn-next"
+                onClick={ this.handleNextQuestion }
+              >
+                Next
+              </button>
+            )}
           </div>
         </main>
       );
