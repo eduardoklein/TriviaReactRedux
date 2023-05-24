@@ -56,10 +56,17 @@ class QuestionCard extends Component {
 
   handleNextQuestion = () => {
     const { index } = this.state;
-    this.setState((prev) => ({
-      index: prev.index + 1,
-      isNextQuestion: false,
-    }), this.shuffleAnswers(index + 1));
+    const { questions, history } = this.props;
+    const lastQuestionIndex = questions.length - 1;
+    if (index !== lastQuestionIndex) {
+      this.setState((prev) => ({
+        index: prev.index + 1,
+        isNextQuestion: false,
+        timer: 30,
+      }), this.shuffleAnswers(index + 1));
+      return;
+    }
+    history.push('/feedback');
   };
 
   render() {
@@ -118,6 +125,9 @@ class QuestionCard extends Component {
 }
 
 QuestionCard.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
   questions: PropTypes.arrayOf(PropTypes.shape({
     category: PropTypes.string,
     question: PropTypes.string,
