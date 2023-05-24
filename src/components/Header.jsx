@@ -26,7 +26,7 @@ Header.propTypes = {
 }.isRequired;
 
 const mapStateToProps = (state) => ({
-  player: state.trivia.player,
+  player: state.player,
 });
 
 export default connect(mapStateToProps)(Header);

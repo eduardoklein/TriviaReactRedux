@@ -10,7 +10,6 @@ import Settings from './pages/Settings';
 class App extends React.Component {
   render() {
     return (
-      // BrowserRouter <- tudo que tiver dentro pode ser acessado por uma rota
       <Switch>
         <Route exact path="/" component={ Login } />
         <Route path="/game" component={ Game } />
@@ -21,14 +20,3 @@ class App extends React.Component {
 }
 
 export default App;
-
-// export default function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={ logo } className="App-logo" alt="logo" />
-//         <p>SUA VEZ</p>
-//       </header>
-//     </div>
-//   );
-// }

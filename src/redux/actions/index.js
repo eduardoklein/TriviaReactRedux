@@ -3,7 +3,6 @@ import {
   FAILED_REQUEST,
   SAVE_TRIVIA_QUESTIONS,
   GET_PLAYER_SCORE,
-  UPDATE_SCORE,
 } from './actionTypes';
 
 export const newRequest = () => ({ type: NEW_REQUEST });
@@ -16,14 +15,9 @@ export const saveTriviaQuestions = (questions) => ({
   payload: questions,
 });
 
-export const getPlayerScore = (difficulty) => ({
+export const getPlayerScore = (difficulty, timer) => ({
   type: GET_PLAYER_SCORE,
-  difficulty,
-});
-
-export const updateScore = (score) => ({
-  type: UPDATE_SCORE,
-  score,
+  payload: { difficulty, timer },
 });
 
 export const thunkTriviaQuestions = () => async (dispatch) => {
@@ -34,7 +28,7 @@ export const thunkTriviaQuestions = () => async (dispatch) => {
     const request = await fetch(API_URL);
     const data = await request.json();
     if (!data.results.length) localStorage.removeItem('token');
-    const mapPoints = data.results.map((element) => {
+    const mappedQuestions = data.results.map((element) => {
       switch (element.difficulty) {
       case 'easy':
         element.difficulty = 1;
@@ -44,10 +38,10 @@ export const thunkTriviaQuestions = () => async (dispatch) => {
         break;
       default:
         element.difficulty = 3;
-      } return element;
+      }
+      return element;
     });
-    // dispatch(mapPoints);
-    dispatch(saveTriviaQuestions(mapPoints));
+    dispatch(saveTriviaQuestions(mappedQuestions));
   } catch (error) {
     dispatch(failedRequest(error));
   }

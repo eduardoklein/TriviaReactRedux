@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { getPlayerScore, updateScore } from '../redux/actions';
+import { getPlayerScore } from '../redux/actions';
 import './QuestionCard.css';
 
 const interval = 1000;
@@ -51,19 +51,12 @@ class QuestionCard extends Component {
     }
   };
 
-  handleCorrectAnswer = () => {
-
-  };
-
   render() {
-    const { questions, getPlayerScoreDispatched } = this.props;
+    const { questions, getScore } = this.props;
     if (questions.length) {
       const { timer, answers } = this.state;
       const index = 0;
-      console.log(questions[0]);
-      const { category,
-        question,
-        correct_answer: correct,
+      const { category, question, correct_answer: correct,
         difficulty } = questions[index];
       let indexCounter = 0;
       return (
@@ -92,7 +85,7 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
-                  onClick={ this.handleCorrectAnswer }
+                  onClick={ () => getScore(difficulty, timer) }
                 >
                   {answer}
                 </button>
@@ -105,6 +98,7 @@ class QuestionCard extends Component {
     }
   }
 }
+
 QuestionCard.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.shape({
     difficulty: PropTypes.number,
@@ -113,14 +107,16 @@ QuestionCard.propTypes = {
     correct_answer: PropTypes.string,
     incorrect_answers: PropTypes.arrayOf(PropTypes.string),
   })).isRequired,
-  getPlayerScoreDispatched: PropTypes.func.isRequired,
+  getScore: PropTypes.func.isRequired,
 };
-const mapStateToProps = ({ trivia }) => ({
-  questions: trivia.questions,
-  isLoading: trivia.isFetching,
+
+const mapStateToProps = (state) => ({
+  questions: state.questions,
+  isLoading: state.isFetching,
 });
+
 const mapDispatchToProps = (dispatch) => ({
-  getPlayerScoreDispatched: (difficulty) => dispatch(getPlayerScore(difficulty)),
-  updateScoreDispatched: (score) => dispatch(updateScore(score)),
+  getScore: (difficulty, timer) => dispatch(getPlayerScore(difficulty, timer)),
 });
+
 export default connect(mapStateToProps, mapDispatchToProps)(QuestionCard);
