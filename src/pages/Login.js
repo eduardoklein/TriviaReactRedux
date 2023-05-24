@@ -19,9 +19,6 @@ class Login extends React.Component {
     const valUsername = username.length >= minCharacter;
     const valEmail = email.length >= minCharacter;
 
-    // const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    // const valEmail = emailRegex.test(email);
-
     this.setState({
       isButtonDisabled: !(valUsername && valEmail),
     });
@@ -111,11 +108,5 @@ Login.propTypes = {
   }),
   dispatch: PropTypes.func,
 }.isRequired;
-
-// const mapStateToProps = (state) => ({
-//   email: state.user.email,
-// });
-
-// export default connect(mapStateToProps)(Login);
 
 export default connect()(withRouter(Login));

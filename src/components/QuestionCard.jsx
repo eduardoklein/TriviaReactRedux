@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { getPlayerScore } from '../redux/actions';
 import './QuestionCard.css';
 
 const interval = 1000;
-
 class QuestionCard extends Component {
   state = {
     answers: [],
@@ -15,24 +15,23 @@ class QuestionCard extends Component {
 
   componentDidMount() {
     const { index } = this.state;
-    this.timerInterval();
     this.shuffleAnswers(index);
+    this.timerInterval = setInterval(() => {
+      this.setState((prevState) => {
+        if (prevState.timer === 0) {
+          clearInterval(this.timerInterval);
+          return prevState;
+        }
+        return {
+          timer: prevState.timer - 1,
+        };
+      });
+    }, interval);
   }
 
   componentWillUnmount() {
     clearInterval(this.timerInterval);
   }
-
-  timerInterval = () => {
-    const { timer } = this.state;
-    if (timer > 0) {
-      setInterval(() => {
-        this.setState((prevState) => ({
-          timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
-        }));
-      }, interval);
-    }
-  };
 
   shuffleAnswers = (index) => {
     const { questions } = this.props;
@@ -45,7 +44,6 @@ class QuestionCard extends Component {
         .map((answer) => ({ answer, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ answer }) => answer);
-
       this.setState({ answers: shuffledAnswers });
     }
   };
@@ -70,10 +68,11 @@ class QuestionCard extends Component {
   };
 
   render() {
-    const { questions } = this.props;
+    const { questions, getScore } = this.props;
     if (questions.length) {
       const { timer, answers, index, isNextQuestion } = this.state;
-      const { category, question, correct_answer: correct } = questions[index];
+      const { category, question, correct_answer: correct,
+        difficulty } = questions[index];
       let indexCounter = 0;
       return (
         <main>
@@ -102,7 +101,7 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
-                  onClick={ this.handleClickOnAnswer }
+                  onClick={ () => { getScore(difficulty, timer); this.handleClickOnAnswer; } }
                 >
                   {answer}
                 </button>
@@ -129,16 +128,22 @@ QuestionCard.propTypes = {
     push: PropTypes.func,
   }).isRequired,
   questions: PropTypes.arrayOf(PropTypes.shape({
+    difficulty: PropTypes.number,
     category: PropTypes.string,
     question: PropTypes.string,
     correct_answer: PropTypes.string,
     incorrect_answers: PropTypes.arrayOf(PropTypes.string),
   })).isRequired,
+  getScore: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ({ trivia }) => ({
-  questions: trivia.questions,
-  isLoading: trivia.isFetching,
+const mapStateToProps = (state) => ({
+  questions: state.questions,
+  isLoading: state.isFetching,
 });
 
-export default connect(mapStateToProps)(QuestionCard);
+const mapDispatchToProps = (dispatch) => ({
+  getScore: (difficulty, timer) => dispatch(getPlayerScore(difficulty, timer)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionCard);
