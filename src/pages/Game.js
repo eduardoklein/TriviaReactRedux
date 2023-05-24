@@ -38,10 +38,10 @@ Game.propTypes = {
   isLoading: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = ({ trivia }) => ({
-  questions: trivia.questions,
-  isLoading: trivia.isFetching,
-  error: trivia.error,
+const mapStateToProps = (state) => ({
+  questions: state.questions,
+  isLoading: state.isFetching,
+  error: state.error,
 });
 
 const mapDispatchToProps = (dispatch) => ({
