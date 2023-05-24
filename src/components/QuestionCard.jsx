@@ -9,9 +9,13 @@ class QuestionCard extends Component {
   state = {
     answers: [],
     timer: 30,
+    index: 0,
+    isNextQuestion: false,
   };
 
   componentDidMount() {
+    const { index } = this.state;
+    this.shuffleAnswers(index);
     this.timerInterval = setInterval(() => {
       this.setState((prevState) => {
         if (prevState.timer === 0) {
@@ -23,25 +27,18 @@ class QuestionCard extends Component {
         };
       });
     }, interval);
-    this.shuffleAnswers();
   }
 
   componentWillUnmount() {
     clearInterval(this.timerInterval);
   }
 
-  timerInterval = () => setInterval(() => {
-    this.setState((prevState) => ({
-      timer: prevState.timer > 0 ? prevState.timer - 1 : 0,
-    }));
-  }, interval);
-
-  shuffleAnswers = () => {
+  shuffleAnswers = (index) => {
     const { questions } = this.props;
     if (questions.length) {
       const answers = [
-        questions[0].correct_answer,
-        ...questions[0].incorrect_answers,
+        questions[index].correct_answer,
+        ...questions[index].incorrect_answers,
       ];
       const shuffledAnswers = answers
         .map((answer) => ({ answer, sort: Math.random() }))
@@ -51,11 +48,29 @@ class QuestionCard extends Component {
     }
   };
 
+  handleClickOnAnswer = () => {
+    this.setState({ isNextQuestion: true });
+  };
+
+  handleNextQuestion = () => {
+    const { index } = this.state;
+    const { questions, history } = this.props;
+    const lastQuestionIndex = questions.length - 1;
+    if (index !== lastQuestionIndex) {
+      this.setState((prev) => ({
+        index: prev.index + 1,
+        isNextQuestion: false,
+        timer: 30,
+      }), this.shuffleAnswers(index + 1));
+      return;
+    }
+    history.push('/feedback');
+  };
+
   render() {
     const { questions, getScore } = this.props;
     if (questions.length) {
-      const { timer, answers } = this.state;
-      const index = 0;
+      const { timer, answers, index, isNextQuestion } = this.state;
       const { category, question, correct_answer: correct,
         difficulty } = questions[index];
       let indexCounter = 0;
@@ -72,6 +87,7 @@ class QuestionCard extends Component {
                     data-testid={ `wrong-answer-${indexCounter}` }
                     className="wrong-answer"
                     disabled={ timer === 0 }
+                    onClick={ this.handleClickOnAnswer }
                   >
                     {answer}
                   </button>
@@ -85,13 +101,24 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
-                  onClick={ () => getScore(difficulty, timer) }
+                  onClick={ () => {
+                    getScore(difficulty, timer);
+                    this.handleClickOnAnswer();
+                  } }
                 >
                   {answer}
                 </button>
               );
             })}
             {timer}
+            {isNextQuestion && (
+              <button
+                data-testid="btn-next"
+                onClick={ this.handleNextQuestion }
+              >
+                Next
+              </button>
+            )}
           </div>
         </main>
       );
@@ -100,6 +127,9 @@ class QuestionCard extends Component {
 }
 
 QuestionCard.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
   questions: PropTypes.arrayOf(PropTypes.shape({
     difficulty: PropTypes.number,
     category: PropTypes.string,

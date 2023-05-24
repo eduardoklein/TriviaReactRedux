@@ -3,6 +3,7 @@ import {
   FAILED_REQUEST,
   SAVE_TRIVIA_QUESTIONS,
   GET_PLAYER_SCORE,
+  SAVE_PLAYER_INFO,
 } from './actionTypes';
 
 export const newRequest = () => ({ type: NEW_REQUEST });
@@ -13,6 +14,10 @@ export const failedRequest = (error) => ({
 export const saveTriviaQuestions = (questions) => ({
   type: SAVE_TRIVIA_QUESTIONS,
   payload: questions,
+});
+export const savePlayerInfo = (name, gravatarEmail) => ({
+  type: SAVE_PLAYER_INFO,
+  payload: { name, gravatarEmail },
 });
 
 export const getPlayerScore = (difficulty, timer) => ({
