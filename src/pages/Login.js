@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import md5 from 'crypto-js/md5';
+import { savePlayerInfo } from '../redux/actions';
 
 class Login extends React.Component {
   state = {
@@ -41,8 +43,11 @@ class Login extends React.Component {
   };
 
   onLoginButtonClick = async () => {
-    const { history } = this.props;
+    const { history, saveInfo } = this.props;
     await this.fetchTriviaToken();
+    const { username: name, email } = this.state;
+    const gravatarEmail = md5(email).toString();
+    saveInfo(name, gravatarEmail);
     history.push('/game');
   };
 
@@ -105,8 +110,12 @@ class Login extends React.Component {
 Login.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
-  }),
-  dispatch: PropTypes.func,
-}.isRequired;
+  }).isRequired,
+  saveInfo: PropTypes.func.isRequired,
+};
 
-export default connect()(withRouter(Login));
+const mapDispatchToProps = (dispatch) => ({
+  saveInfo: (name, gravatarEmail) => dispatch(savePlayerInfo(name, gravatarEmail)),
+});
+
+export default connect(null, mapDispatchToProps)(withRouter(Login));

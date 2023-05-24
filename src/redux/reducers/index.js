@@ -1,5 +1,5 @@
 import {
-  NEW_REQUEST, FAILED_REQUEST, SAVE_TRIVIA_QUESTIONS, GET_PLAYER_SCORE,
+  NEW_REQUEST, FAILED_REQUEST, SAVE_PLAYER_INFO, SAVE_TRIVIA_QUESTIONS, GET_PLAYER_SCORE,
 } from '../actions/actionTypes';
 
 const INITIAL_STATE = {
@@ -22,6 +22,8 @@ const reducer = (state = INITIAL_STATE, action) => {
     return { ...state, isFetching: true };
   case FAILED_REQUEST:
     return { ...state, isFetching: false, error: action.payload };
+  case SAVE_PLAYER_INFO:
+    return { ...state, player: { ...state.player, ...action.payload } };
   case SAVE_TRIVIA_QUESTIONS:
     return { ...state, isFetching: false, questions: action.payload };
   case GET_PLAYER_SCORE:
