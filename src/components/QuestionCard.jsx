@@ -101,7 +101,10 @@ class QuestionCard extends Component {
                   data-testid="correct-answer"
                   className="correct-answer"
                   disabled={ timer === 0 }
-                  onClick={ () => { getScore(difficulty, timer); this.handleClickOnAnswer; } }
+                  onClick={ () => {
+                    getScore(difficulty, timer);
+                    this.handleClickOnAnswer();
+                  } }
                 >
                   {answer}
                 </button>
